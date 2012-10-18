@@ -1,4 +1,3 @@
-````clojure
 (ns h2h
   (:gen-class))
 
@@ -59,4 +58,3 @@
         
 
 (defn h2h [str-html] (html2hiccup str-html))
-````
