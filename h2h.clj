@@ -45,7 +45,6 @@
                             (interleave (flatten tags-content)
                                         (flatten tags-open)
                                         (flatten tags-close)))]
-    ;; Returns vec because (first %)
     (dosync
      (lazy-seq
       (for [ht html-tags
@@ -53,8 +52,7 @@
             [content (first ht)
              opent (second ht)
              closet (last ht)]]
-        [(first (first opent))
+        [(second  opent)
          content])))))
         
-
 (defn h2h [str-html] (html2hiccup str-html))
