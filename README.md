@@ -16,46 +16,44 @@
   "Converts full tag elemnts <t></t>"
   [str-html]
   (let
-      [tags-open (dosync
-                  (map #(hash-map
+      [tags-open (map #(hash-map
+                        (keyword (last %))
+                        '{})
+                      (re-seq #"<(\w+)>"
+                              str-html))
+       tags-close (map #(hash-map
                          (keyword (last %))
                          '{})
-                       (re-seq #"<(\w+)>"
-                               str-html)))
-       tags-close (dosync
-                   (map #(hash-map
-                          (keyword (last %))
-                          '{})
-                        (re-seq #"<(/\w+)>"
-                                str-html)))
-       tags-content (dosync
-                     (let
-                         [tags (lazy-seq
-                                (.split str-html
-                                        ">"))
-                          stags (filter #(.contains
-                                          (str %)
-                                          "</")
-                                        tags)]
+                       (re-seq #"<(/\w+)>"
+                               str-html))
+       tags-content (let
+                        [tags (lazy-seq
+                               (.split str-html
+                                       ">"))
+                         stags (filter #(.contains
+                                         (str %)
+                                         "</")
+                                       tags)]
                       (map #(first
                              (.split
                               (str %)
                               "<"))
-                           stags)))
+                           stags))
        html-tags (partition 3
-                            (interleave (flatten tags-content)
-                                        (flatten tags-open)
-                                        (flatten tags-close)))]
-    (dosync
+                            (interleave
+                             (flatten tags-content)
+                             (flatten tags-open)
+                             (flatten tags-close)))]
      (lazy-seq
       (for [ht html-tags
             :let
             [content (first ht)
-             opent (second ht)
+             opent (first
+                    (keys
+                     (second ht)))
              closet (last ht)]]
-        [(second  opent)
-         content])))))
+        [opent
+         content]))))
         
-
 (defn h2h [str-html] (html2hiccup str-html))
 ````
